@@ -1,29 +1,39 @@
-const PATIENT_URL = 'http://localhost:8080/patient';
-let patients = [];
 
+const MedicalSpecialities_URL = 'http://localhost:8080/medical_speciality';
+let medicalspecialities = [];
+var myHeaders = new Headers();
+var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, generator) {
+    function adopt(value) { return value instanceof P ? value : new P(function (resolve) { resolve(value); }); }
+    return new (P || (P = Promise))(function (resolve, reject) {
+        function fulfilled(value) { try { step(generator.next(value)); } catch (e) { reject(e); } }
+        function rejected(value) { try { step(generator["throw"](value)); } catch (e) { reject(e); } }
+        function step(result) { result.done ? resolve(result.value) : adopt(result.value).then(fulfilled, rejected); }
+        step((generator = generator.apply(thisArg, _arguments || [])).next());
+    });
+};
 
 window.addEventListener('DOMContentLoaded', () => {
-    getPatients();
+    getMedicalSpecialities();
 })
-const getPatients = () => {
-    fetch(PATIENT_URL)
+const getMedicalSpecialities = () => {
+    fetch(MedicalSpecialities_URL)
         .then(response => response.json())
         .then(data => {
-            patients = data;
+            medicalspecialities = data;
             console.log(data);
-            renderResult(patients);
+            renderResult(medicalspecialities);
         })
 }
 
-const patientsList = document.querySelector('#patientsList');
-const renderResult = (patients) => {
+const medicalspecialitiesList = document.querySelector('#medicalspecialitiesList');
+const renderResult = (medicalspecialities) => {
     let listHTML = "";
-    patients.forEach(patient =>{
+    medicalspecialities.forEach(medicalspeciality =>{
         listHTML += `
       <div class="card">
-        <div>id: ${patient.id}</div>
-        <div>Name: ${patient.name}</div>
-        <div>Numb_of_appoints: ${patient.numb_of_appoints}</div>
+        <div>id: ${medicalspeciality.id}</div>
+        <div>Name: ${medicalspeciality.name}</div>
+        <div>Numb_of_appoints: ${medicalspeciality.numb_of_appoints}</div>
         <div class="options">
           <button type="button" >Editar</button>
           <button type="button" >Eliminar</button>
@@ -31,10 +41,10 @@ const renderResult = (patients) => {
       </div>
        `
     })
-    patientsList.innerHTML = listHTML
+    medicalspecialitiesList.innerHTML = listHTML
 }
 
-const createPatient = () => {
+const createMedicalSpecialities = () => {
     const formData = new FormData(document.querySelector('#formAdd'));
 
     if(!formData.get('nombre').length || !formData.get('numero de citas') || !formData.get('rason')) {
@@ -43,17 +53,16 @@ const createPatient = () => {
     }
     document.querySelector('#msgFormAdd').innerHTML = '';
 
-    const patient = {
+    const medicalspecialitY = {
         Nombre: formData.get('nombre'),
-        fecha: formData.get('numero de citas'),
-        radon: formData.get('rason'),
+        doctor: formData.get('doctor'),
     }
 
-    console.log(patient)
+    console.log(medicalspecialitY)
 
-    fetch(PATIENT_URL, {
+    fetch(MedicalSpecialities_URL, {
         method: 'POST',
-        body: JSON.stringify(patient),
+        body: JSON.stringify(medicalspecialitY),
         headers: {
             'Content-Type': 'application/json'
         }
@@ -65,13 +74,13 @@ const createPatient = () => {
         })
         .then(response => {
             alertManager('success', response.mensaje)
-            getPatients();
+            getMedicalSpecialities();
         })
 }
 
-const deletePatient = (id) => {
+const deleteMedicalSpecialitY = (id) => {
 
-    fetch(`${PATIENT_URL}/${id}`, {
+    fetch(`${MedicalSpecialities_URL}/${id}`, {
         method: 'DELETE'
     })
         .then(res => res.json())
@@ -81,7 +90,7 @@ const deletePatient = (id) => {
         .then(response => {
             alertManager('success', response.mensaje);
             closeModalConfirm();
-            getPatients();
+            getMedicalSpecialities();
             deleteId = null;
         })
 
